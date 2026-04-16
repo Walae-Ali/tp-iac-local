@@ -15,6 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Build app Docker image
+        run: docker build -t tp-web-app:latest -f Dockerfile_app .
+
       # Étape 2 : Installer Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
