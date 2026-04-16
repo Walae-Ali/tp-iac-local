@@ -1,0 +1,36 @@
+name: Terraform IaC Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Récupérer le code source
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Étape 2 : Installer Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      # Étape 3 : Initialisation
+      - name: Terraform Init
+        run: terraform init
+
+      # Étape 4 : Planification (gate du DLC)
+      - name: Terraform Plan
+        run: terraform plan
+        id: plan
+
+      # Étape 5 : Apply — seulement si Plan a réussi
+      - name: Terraform Apply
+        if: steps.plan.outcome == 'success'
+        run: terraform apply -auto-approve
